@@ -4,8 +4,6 @@ import fs from 'fs-extra';
 export const link = async (cwd: string, target: string) => {
   const targetDir = path.join(cwd, target);
 
-  // fs.ensureDirSync(targetDir);
-
   const files = fs.readdirSync(targetDir);
   const fileNames = files.map((item) => item.split('.')[0]);
 
