@@ -1,0 +1,36 @@
+{
+  "name": "@mavvy/microservices-gateway",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "The Nodejs Gateway Micro Framework",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [],
+  "author": "Marc Jeric Espiritu",
+  "bin": {
+    "mvygw": "./dist/bin/mvy.js"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@apollo/server": "^4.9.3",
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^20.7.1",
+    "graphql": "^16.6.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "fs-extra": "^11.1.0"
+  },
+  "peerDependencies": {
+    "@apollo/server": "^4.9.3",
+    "graphql": "^16.6.0"
+  }
+}
