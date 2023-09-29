@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 
-const PORT = Number(process.env.PORT || 4000);
+const PORT = Number(process.env.PORT);
 
 type ServeProps = {
   resolvers: {

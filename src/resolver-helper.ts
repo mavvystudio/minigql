@@ -22,15 +22,53 @@ const createSchema = (current: Resolver) => {
   return `${current.name}(input: ${current.inputVariable}):${current.returnType}`;
 };
 
-const createResolverFunc = (current: Resolver) => {
-  return { [current.name]: current.handler };
+const createResolverFunc = (current: Resolver, services: any) => {
+  return {
+    [current.name]: (parentContext: any, variables: any, context: any) =>
+      current.handler({
+        services,
+        variables,
+        parentContext,
+        context,
+        input: variables?.input,
+      }),
+  };
 };
-export const createResolverSchema = (items: Resolver[]) => {
+
+const createServices = (s: string) => {
+  const arr = s.split(',');
+  const services = arr.reduce((prev, current) => {
+    const [serviceName, url] = current.split('=');
+    return {
+      ...prev,
+      [serviceName]: async (name: string, input?: any) => {
+        const res = await fetch(`${url}/service`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            serviceMethod: name,
+            input,
+          }),
+        });
+        return res.json();
+      },
+    };
+  }, {});
+  return services;
+};
+
+export const createResolverSchema = (
+  items: Resolver[],
+  servicesInfo: string,
+) => {
+  const services = createServices(servicesInfo);
   const generatedData = items.reduce(
     (prev, current) => {
       const { resolverType } = current;
       const schema = createSchema(current);
-      const resolverFunc = createResolverFunc(current);
+      const resolverFunc = createResolverFunc(current, services);
 
       const query = resolverType === 'Query' ? resolverFunc : {};
       const mutation = resolverType === 'Mutation' ? resolverFunc : {};

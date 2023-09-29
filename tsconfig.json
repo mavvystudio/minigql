@@ -2,8 +2,8 @@
   "compilerOptions": {
     "strict": true,
     "module": "esnext",
-    "lib": ["es2020"],
-    "target": "ES2017",
+    "lib": ["es2022", "dom"],
+    "target": "ES2022",
     "esModuleInterop": true,
     "moduleResolution": "node",
     "stripInternal": true,

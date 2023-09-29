@@ -15,10 +15,11 @@ import schema from './schema.js';
 
 const init = async () => {
 
+  const services = process.env.SERVICES;
   const resolverInfo = await service.utils.link(process.cwd(), '.mvy/resolvers');
-  const resolvers = service.resolverHelper.createResolverSchema(resolverInfo);
+  const resolvers = service.resolverHelper.createResolverSchema(resolverInfo, services);
 
-  service.server.serve({resolvers, schema});
+  service.server.serve({resolvers, schema, services});
 }
 
 init();
