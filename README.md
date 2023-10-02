@@ -178,7 +178,7 @@ export SERVICES = product=http://localhost:3001,cart=http://localhost:3002
 ### Usage
 Call the service on you resolver
 ```javascript
-// resolver/myProducts
+// resolvers/myProducts
 export const resolverType = 'Query';
 
 export const returnType = '[Product]';
@@ -188,6 +188,22 @@ export const handler = async ({services}) => {
 
   return res.data;
 }
+```
+
+```javascript
+// resolvers/addProduct.ts
+
+export const resolverType = 'Mutation';
+
+export const inputVariable = 'AddProductInput!';
+
+export const returnType = 'Product';
+
+export async function handler({ services, input }) {
+  const res = await services.product('addProduct', input);
+  return res.data;
+}
+
 ```
 
 #### @mavvy/miniserver handler
@@ -202,6 +218,19 @@ export async function handler({ currentModel }) {
     id: doc.id,
     name: doc.name,
   }));
+}
+```
+
+```javascript
+// handlers/addProduct.ts
+
+export async function handler({ currentModel, input }) {
+  const doc = await currentModel.create(input);
+
+  return {
+    id: doc.id,
+    name: doc.name,
+  };
 }
 ```
 
