@@ -10,6 +10,20 @@ Setting up a nodejs graphql server should be simple.
 npm install @mavvy/minigql @apollo/server graphql
 ```
 
+install typescript
+```bash
+npm install typescript @types/node --save-dev
+```
+
+### package.json
+
+Set type to module
+```json
+{
+  "type": "module"
+}
+```
+
 ### Add script to package.json
 ```javascript
   {
