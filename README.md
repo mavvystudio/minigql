@@ -184,7 +184,7 @@ export const resolverType = 'Query';
 export const returnType = '[Product]';
 
 export const handler = async ({services}) => {
-  const res = services.products('productList');
+  const res = services.product('productList');
 
   return res.data;
 }
