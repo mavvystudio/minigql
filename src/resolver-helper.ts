@@ -24,18 +24,27 @@ const createSchema = (current: Resolver) => {
 
 const createResolverFunc = (current: Resolver, services: any) => {
   return {
-    [current.name]: (parentContext: any, variables: any, context: any) =>
+    [current.name]: (
+      parentContext: any,
+      variables: any,
+      context: any,
+      info: any,
+    ) =>
       current.handler({
         services,
         variables,
         parentContext,
         context,
         input: variables?.input,
+        info,
       }),
   };
 };
 
-const createServices = (s: string) => {
+const createServices = (s?: string) => {
+  if (!s) {
+    return null;
+  }
   const arr = s.split(',');
   const services = arr.reduce((prev, current) => {
     const [serviceName, url] = current.split('=');

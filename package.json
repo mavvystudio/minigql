@@ -16,7 +16,7 @@
   "keywords": [],
   "author": "Marc Jeric Espiritu",
   "bin": {
-    "minigql": "./dist/bin/mvy.js"
+    "minigql": "./dist/bin/minigql.js"
   },
   "license": "MIT",
   "devDependencies": {
