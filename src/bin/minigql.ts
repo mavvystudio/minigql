@@ -16,14 +16,13 @@ import schema from './schema.js';
 const buildDir = '${buildDir}';
 const init = async () => {
 
-  const services = process.env.SERVICES;
   const resolverInfo = await service.utils.link(process.cwd(), '${buildDir}/resolvers');
-  const resolvers = service.resolverHelper.createResolverSchema(resolverInfo, services);
+  const resolvers = await service.resolverHelper.createResolverSchema(resolverInfo);
 
   const options = {
     buildDir,
   };
-  service.server.serve({resolvers, schema, services}, options);
+  service.server.serve({resolvers, schema}, options);
 }
 
 init();

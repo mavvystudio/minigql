@@ -129,7 +129,7 @@ export const handler = async () => {
 |input|Shortcut for the input property from the variables. Same as `variables.input`|
 |context|An object shared across all resolvers that are executing for a particular operation. |
 |info|Contains information about the operation's execution state, including the field name, the path to the field from the root, and more.|
-|services| An object the contains all the services that are defined on your `env` file. see [miniserver integration](#integration-with-mavvyminiserver) for more info.
+|services| An object the contains all the services that are defined on your `servicesconfig.json` file. see [miniserver integration](#integration-with-mavvyminiserver) for more info.
 
 ```javascript
 export const handler = asnc (handperParams) => {
@@ -183,10 +183,15 @@ export async function handler() {
 ## Integration with @mavvy/miniserver
 
 ### Configuration
-add SERVICES to `.env` file
+create a `servicesconfig.json` file on your project root.
 
-```bash
-export SERVICES = product=http://localhost:3001,cart=http://localhost:3002
+```json
+{
+  "product": {
+    "url": "http://localhost:3001",
+    "methods": ["products", "productById", "addProduct"]
+  }
+}
 ```
 
 ### Usage
@@ -198,7 +203,7 @@ export const resolverType = 'Query';
 export const returnType = '[Product]';
 
 export const handler = async ({services}) => {
-  const res = services.product('productList');
+  const res = await services.product.products;
 
   return res.data;
 }
@@ -214,7 +219,8 @@ export const inputVariable = 'AddProductInput!';
 export const returnType = 'Product';
 
 export async function handler({ services, input }) {
-  const res = await services.product('addProduct', input);
+  const res = await services.product.addProduct(input);
+
   return res.data;
 }
 
