@@ -5,19 +5,22 @@ import path from 'path';
 import { execSync, spawn } from 'child_process';
 
 const buildDir = '.minigql';
+const servicesConfigFile = 'servicesconfig.json';
 const argv = process.argv;
 
 if (argv[2] === 'start') {
   execSync(`rm -rf ${buildDir} && tsc --outDir "${buildDir}"`);
 
   const fileContent = `import * as service from '@mavvy/minigql';
+import path from 'path';
 import schema from './schema.js'; 
 
 const buildDir = '${buildDir}';
 const init = async () => {
 
-  const resolverInfo = await service.utils.link(process.cwd(), '${buildDir}/resolvers');
-  const resolvers = await service.resolverHelper.createResolverSchema(resolverInfo);
+  const resolverFile = await service.utils.link(process.cwd(), '${buildDir}/resolvers');
+  const servicesFile = await service.utils.importFile(path.join(process.cwd(), '${servicesConfigFile}'));
+  const resolvers = await service.resolverHelper.createResolverSchema(resolverFile, servicesFile);
 
   const options = {
     buildDir,

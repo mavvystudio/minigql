@@ -83,33 +83,29 @@ type ServiceItem = {
   methods: string[];
 };
 
-const servicesConfigFileName = 'servicesconfig.json';
+const getServices = (fileData: string | null) => {
+  if (!fileData) {
+    return null;
+  }
+  const jsonData = JSON.parse(fileData);
+  const servicesData = Object.entries(jsonData).reduce(
+    (prev, current: [string, any]) =>
+      prev.concat({
+        name: current[0],
+        url: current[1].url,
+        methods: current[1].methods,
+      }),
+    [] as ServiceItem[],
+  );
 
-const getServices = () => {
-  const serviceFile = path.join(process.cwd(), servicesConfigFileName);
-  return new Promise((resolve) => {
-    fs.readFile(serviceFile, (err, data) => {
-      if (err) {
-        resolve(null);
-        return undefined;
-      }
-      const jsonData = JSON.parse(data.toString());
-      const servicesData = Object.entries(jsonData).reduce(
-        (prev, current: [string, any]) =>
-          prev.concat({
-            name: current[0],
-            url: current[1].url,
-            methods: current[1].methods,
-          }),
-        [] as ServiceItem[],
-      );
-      resolve(servicesData);
-    });
-  });
+  return servicesData;
 };
 
-export const createResolverSchema = async (items: Resolver[]) => {
-  const servicesData = (await getServices()) as null | ServiceItem[];
+export const createResolverSchema = async (
+  items: Resolver[],
+  servicesConfigFile: null | string,
+) => {
+  const servicesData = getServices(servicesConfigFile);
   const services = createServices(servicesData);
   const generatedData = items.reduce(
     (prev, current) => {

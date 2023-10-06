@@ -1,6 +1,16 @@
 import path from 'path';
 import fs from 'fs-extra';
 
+export const importFile = (path: string) =>
+  new Promise((resolve) => {
+    fs.readFile(path, (err, data) => {
+      if (err) {
+        return resolve(null);
+      }
+      resolve(data.toString());
+    });
+  });
+
 export const link = async (cwd: string, target: string) => {
   const targetDir = path.join(cwd, target);
 
