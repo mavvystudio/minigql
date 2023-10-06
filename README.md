@@ -1,6 +1,6 @@
 # MiniGQL - A Minimalist Nodejs Graphql Server
 
-Setting up a nodejs graphql server should be simple.
+Setting up a nodejs graphql server should be simple, right?
 
 ## Setup
 
