@@ -132,7 +132,7 @@ export const handler = async () => {
 |services| An object the contains all the services that are defined on your `servicesconfig.json` file. see [miniserver integration](#integration-with-mavvyminiserver) for more info.
 
 ```javascript
-export const handler = asnc (handperParams) => {
+export const handler = asnc (handlerParams) => {
   console.log(handlerParams.input);
 }
 ```
@@ -203,7 +203,7 @@ export const resolverType = 'Query';
 export const returnType = '[Product]';
 
 export const handler = async ({services}) => {
-  const res = await services.product.products;
+  const res = await services.product.products();
 
   return res.data;
 }
