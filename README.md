@@ -33,6 +33,20 @@ Set type to module
   }
 ```
 
+### sample tsconfig.json file
+```json
+{
+  "compilerOptions": {
+    "lib": ["es2020"],
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "types": ["node"]
+  }
+}
+```
+
 ### Add .env
 
 ```bash
