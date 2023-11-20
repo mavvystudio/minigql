@@ -7,7 +7,7 @@ Setting up a nodejs graphql server should be simple, right?
 ### Install
 
 ```bash
-npm install @mavvy/minigql @apollo/server graphql
+npm install @mavvy/minigql
 ```
 
 install typescript
