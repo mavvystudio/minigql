@@ -143,7 +143,6 @@ export const handler = async () => {
 |input|Shortcut for the input property from the variables. Same as `variables.input`|
 |context|An object shared across all resolvers that are executing for a particular operation. |
 |info|Contains information about the operation's execution state, including the field name, the path to the field from the root, and more.|
-|services| An object the contains all the services that are defined on your `servicesconfig.json` file. see [miniserver integration](#integration-with-mavvyminiserver) for more info.
 
 ```javascript
 export const handler = asnc (handlerParams) => {
@@ -194,78 +193,3 @@ export async function handler() {
 }
 ```
 
-## Integration with @mavvy/miniserver
-
-### Configuration
-create a `servicesconfig.json` file on your project root.
-
-```json
-{
-  "product": {
-    "url": "http://localhost:3001",
-    "methods": ["products", "productById", "addProduct"]
-  }
-}
-```
-
-### Usage
-Call the service on you resolver
-```javascript
-// resolvers/myProducts
-export const resolverType = 'Query';
-
-export const returnType = '[Product]';
-
-export const handler = async ({services}) => {
-  const res = await services.product.products();
-
-  return res.data;
-}
-```
-
-```javascript
-// resolvers/addProduct.ts
-
-export const resolverType = 'Mutation';
-
-export const inputVariable = 'AddProductInput!';
-
-export const returnType = 'Product';
-
-export async function handler({ services, input }) {
-  const res = await services.product.addProduct(input);
-
-  return res.data;
-}
-
-```
-
-#### @mavvy/miniserver handler
-
-```javascript
-// handlers/productList.ts
-
-export async function handler({ currentModel }) {
-  const data = await currentModel.find();
-
-  return data.map((doc: any) => ({
-    id: doc.id,
-    name: doc.name,
-  }));
-}
-```
-
-```javascript
-// handlers/addProduct.ts
-
-export async function handler({ currentModel, input }) {
-  const doc = await currentModel.create(input);
-
-  return {
-    id: doc.id,
-    name: doc.name,
-  };
-}
-```
-
-See more on [@mavvy/miniserver](https://github.com/mavvy22/miniserver)
