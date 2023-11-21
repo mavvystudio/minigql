@@ -32,9 +32,14 @@ const getServerApp = (
     });
   });
 
+type ServeOptions = {
+  buildDir: string;
+  plugins: any[];
+};
+
 export const serve = async (
   { resolvers, schema }: ServeProps,
-  options: { buildDir: string },
+  options: ServeOptions,
 ) => {
   const serverFile = await getServerApp(options.buildDir);
   const apolloConfig = serverFile?.apolloConfig || {};

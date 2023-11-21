@@ -1,6 +1,3 @@
-import path from 'path';
-import fs from 'fs';
-
 type Resolver = {
   resolverType: 'Query' | 'Mutation';
   inputVariable?: string;
@@ -9,6 +6,12 @@ type Resolver = {
   service?: string;
   name: string;
 };
+
+type ResolverParam = { [k: string]: any };
+
+type Plugin = { resolverParam?: ResolverParam };
+
+const defaultPlugin = {};
 
 const createGqlType = (
   resolverType: Resolver['resolverType'],
@@ -25,7 +28,7 @@ const createSchema = (current: Resolver) => {
   return `${current.name}(input: ${current.inputVariable}):${current.returnType}`;
 };
 
-const createResolverFunc = (current: Resolver, services?: any) => {
+const createResolverFunc = (current: Resolver, plugins: any) => {
   return {
     [current.name]: (
       parentContext: any,
@@ -34,7 +37,7 @@ const createResolverFunc = (current: Resolver, services?: any) => {
       info: any,
     ) =>
       current.handler({
-        services,
+        ...plugins,
         variables,
         parentContext,
         context,
@@ -44,74 +47,30 @@ const createResolverFunc = (current: Resolver, services?: any) => {
   };
 };
 
-const createServices = (s: null | ServiceItem[]) => {
-  if (!s) {
-    return null;
+const createResolverPlugins = (plugins?: Plugin[]) => {
+  if (!plugins) {
+    return defaultPlugin;
   }
-
-  const fetcher = async (name: string, url: string, input: any) => {
-    const res = await fetch(`${url}/service`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        serviceMethod: name,
-        input,
-      }),
-    });
-    return res.json();
-  };
-  return s.reduce(
+  return plugins.reduce(
     (prev, current) => ({
       ...prev,
-      [current.name]: current.methods.reduce(
-        (p, c) => ({
-          ...p,
-          [c]: (input?: any) => fetcher(c, current.url, input),
-        }),
-        {},
-      ),
+      ...(current.resolverParam || {}),
     }),
-    {},
+    defaultPlugin,
   );
-};
-
-type ServiceItem = {
-  name: string;
-  url: string;
-  methods: string[];
-};
-
-const getServices = (fileData: string | null) => {
-  if (!fileData) {
-    return null;
-  }
-  const jsonData = JSON.parse(fileData);
-  const servicesData = Object.entries(jsonData).reduce(
-    (prev, current: [string, any]) =>
-      prev.concat({
-        name: current[0],
-        url: current[1].url,
-        methods: current[1].methods,
-      }),
-    [] as ServiceItem[],
-  );
-
-  return servicesData;
 };
 
 export const createResolverSchema = async (
   items: Resolver[],
-  servicesConfigFile: null | string,
+  plugins?: { default: Plugin[] },
 ) => {
-  const servicesData = getServices(servicesConfigFile);
-  const services = createServices(servicesData);
+  const resolverPlugins = createResolverPlugins(plugins?.default);
+
   const generatedData = items.reduce(
     (prev, current) => {
       const { resolverType } = current;
       const schema = createSchema(current);
-      const resolverFunc = createResolverFunc(current, services);
+      const resolverFunc = createResolverFunc(current, resolverPlugins);
 
       const query = resolverType === 'Query' ? resolverFunc : {};
       const mutation = resolverType === 'Mutation' ? resolverFunc : {};

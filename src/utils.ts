@@ -1,6 +1,16 @@
 import path from 'path';
 import fs from 'fs-extra';
 
+export const importJs = async (path: string) => {
+  const exists = fs.existsSync(path);
+  if (!exists) {
+    return undefined;
+  }
+  const importedFile = await import(path);
+
+  return importedFile;
+};
+
 export const importFile = (path: string) =>
   new Promise((resolve) => {
     fs.readFile(path, (err, data) => {

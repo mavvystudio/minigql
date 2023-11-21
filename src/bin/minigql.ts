@@ -5,7 +5,7 @@ import path from 'path';
 import { execSync, spawn } from 'child_process';
 
 const buildDir = '.minigql';
-const servicesConfigFile = 'servicesconfig.json';
+const pluginsFile = 'minigql.plugins.js';
 const argv = process.argv;
 
 if (argv[2] === 'start') {
@@ -19,11 +19,12 @@ const buildDir = '${buildDir}';
 const init = async () => {
 
   const resolverFile = await service.utils.link(process.cwd(), '${buildDir}/resolvers');
-  const servicesFile = await service.utils.importFile(path.join(process.cwd(), '${servicesConfigFile}'));
-  const resolvers = await service.resolverHelper.createResolverSchema(resolverFile, servicesFile);
+  const plugins = await service.utils.importJs(path.join(process.cwd(), '${pluginsFile}'));
+  const resolvers = await service.resolverHelper.createResolverSchema(resolverFile, plugins);
 
   const options = {
     buildDir,
+    plugins
   };
   service.server.serve({resolvers, schema}, options);
 }
