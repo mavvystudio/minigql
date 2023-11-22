@@ -1,7 +1,10 @@
 import fs from 'fs';
 import path from 'path';
-import { ApolloServer } from '@apollo/server';
-import { startStandaloneServer } from '@apollo/server/standalone';
+import { ApolloServer, ApolloServerOptions } from '@apollo/server';
+import {
+  StartStandaloneServerOptions,
+  startStandaloneServer,
+} from '@apollo/server/standalone';
 import { Plugin, ServeOptions, ServeProps } from './types';
 
 const PORT = Number(process.env.PORT);
@@ -14,8 +17,8 @@ input IdInput {
 const getServerApp = (
   buildDir: string,
 ): Promise<{
-  apolloConfig?: any;
-  serverConfig?: any;
+  apolloConfig?: ApolloServerOptions<{}>;
+  serverConfig?: StartStandaloneServerOptions<{}>;
   preStart: () => Promise<void>;
 } | null> =>
   new Promise((resolver) => {
