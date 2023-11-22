@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
+import { Plugin, ServeOptions, ServeProps } from './types';
 
 const PORT = Number(process.env.PORT);
 
@@ -10,17 +11,6 @@ input IdInput {
   id: ID!
 }
 `;
-
-type ServeProps = {
-  resolvers: {
-    schema: string;
-    query: { [s: string]: Function };
-    mutation: { [s: string]: Function };
-  };
-  schema: string;
-  plugins?: { default: { context?: any }[] };
-};
-
 const getServerApp = (
   buildDir: string,
 ): Promise<{
@@ -39,16 +29,11 @@ const getServerApp = (
     });
   });
 
-type ServeOptions = {
-  buildDir: string;
-  plugins?: { default: any[] };
-};
-
-const getContext = (plugins: ServeOptions['plugins']) => {
-  if (!plugins || !plugins.default) {
+const getContext = (plugins?: Plugin[]) => {
+  if (!plugins) {
     return undefined;
   }
-  const target = plugins.default.find((d) => d.context);
+  const target = plugins.find((d) => d.context);
   if (!target) {
     return undefined;
   }
@@ -56,7 +41,7 @@ const getContext = (plugins: ServeOptions['plugins']) => {
 };
 
 export const serve = async (
-  { resolvers, schema, plugins }: ServeProps,
+  { resolvers, schema }: ServeProps,
   options: ServeOptions,
 ) => {
   const serverFile = await getServerApp(options.buildDir);
@@ -76,7 +61,7 @@ export const serve = async (
     ...apolloConfig,
   });
 
-  const c = getContext(plugins);
+  const c = getContext(options.config?.plugins);
   const { url } = await startStandaloneServer(server, {
     listen: { port: PORT },
     context: c,

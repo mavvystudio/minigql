@@ -8,6 +8,10 @@ export const importJs = async (path: string) => {
   }
   const importedFile = await import(path);
 
+  if (importedFile.default) {
+    return importedFile.default;
+  }
+
   return importedFile;
 };
 

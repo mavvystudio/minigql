@@ -1,14 +1,4 @@
-type Resolver = {
-  resolverType?: 'Query' | 'Mutation';
-  inputVariable?: string;
-  returnType?: string;
-  handler: Function;
-  name: string;
-};
-
-type ResolverParam = { [k: string]: any };
-
-type Plugin = { resolverParam?: ResolverParam; context?: () => Promise<any> };
+import { Resolver, Plugin, AppConfig } from './types';
 
 const capitalizeFirstLetter = (str: string) => {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
@@ -151,9 +141,9 @@ const createResolverPlugins = (plugins?: Plugin[]) => {
 export const createResolverSchema = async (
   items: Resolver[],
   schema: string,
-  plugins?: { default: Plugin[] },
+  config?: AppConfig,
 ) => {
-  const resolverPlugins = createResolverPlugins(plugins?.default);
+  const resolverPlugins = createResolverPlugins(config?.plugins);
 
   const generatedData = items.reduce(
     (prev, current) => {
