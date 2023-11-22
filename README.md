@@ -92,7 +92,7 @@ export const handler = async () => {
 #### Resolver options
 
 ##### resolverType
-Resolver type: currently supported types are `Query` and `Mutation`. `Subscription` soon.
+Optional. Resolver type: currently supported types are `Query` and `Mutation`. `Subscription` soon. Default is Query.
 
 ```javascript
 export const resolverType = 'Query';
@@ -100,14 +100,15 @@ export const resolverType = 'Query';
 
 ##### returnType
 
-The return type of the gql resolver that is defined on your `schema.ts` file.
+Optional. The return type of the gql resolver that is defined on your `schema.ts` file.
 
 ```javascript
 export const returnType = '[Product]';
 ```
 
 ##### inputVariable
-input type name for the resolver argument named input
+Optional. input type name for the resolver argument named input
+
 ```javascript
 export const inputVariable = 'NameInput!';
 ```
@@ -129,7 +130,7 @@ export const resolver = async ({input}) => {
 
 ##### handler
 
-The main resolver function to execute
+Required. The main resolver function to execute
 ```javascript
 export const handler = async () => {
   return {name: 'foo'}

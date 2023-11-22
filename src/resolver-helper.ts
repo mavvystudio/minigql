@@ -8,7 +8,7 @@ type Resolver = {
 
 type ResolverParam = { [k: string]: any };
 
-type Plugin = { resolverParam?: ResolverParam };
+type Plugin = { resolverParam?: ResolverParam; context?: () => Promise<any> };
 
 const capitalizeFirstLetter = (str: string) => {
   return `${str.charAt(0).toUpperCase()}${str.slice(1)}`;

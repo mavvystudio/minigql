@@ -18,6 +18,7 @@ type ServeProps = {
     mutation: { [s: string]: Function };
   };
   schema: string;
+  plugins?: { default: { context?: any }[] };
 };
 
 const getServerApp = (
@@ -40,11 +41,22 @@ const getServerApp = (
 
 type ServeOptions = {
   buildDir: string;
-  plugins: any[];
+  plugins?: { default: any[] };
+};
+
+const getContext = (plugins: ServeOptions['plugins']) => {
+  if (!plugins || !plugins.default) {
+    return undefined;
+  }
+  const target = plugins.default.find((d) => d.context);
+  if (!target) {
+    return undefined;
+  }
+  return target.context;
 };
 
 export const serve = async (
-  { resolvers, schema }: ServeProps,
+  { resolvers, schema, plugins }: ServeProps,
   options: ServeOptions,
 ) => {
   const serverFile = await getServerApp(options.buildDir);
@@ -64,8 +76,10 @@ export const serve = async (
     ...apolloConfig,
   });
 
+  const c = getContext(plugins);
   const { url } = await startStandaloneServer(server, {
     listen: { port: PORT },
+    context: c,
     ...serverConfig,
   });
 

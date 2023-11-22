@@ -26,7 +26,7 @@ const init = async () => {
     buildDir,
     plugins
   };
-  service.server.serve({resolvers, schema}, options);
+  service.server.serve({resolvers, schema, plugins}, options);
 }
 
 init();
