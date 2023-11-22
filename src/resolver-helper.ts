@@ -193,7 +193,6 @@ export const createResolverSchema = async (
 
   const queryType = createGqlType('Query', generatedData.querySchema);
   const mutationType = createGqlType('Mutation', generatedData.mutationSchema);
-  console.log(queryType, mutationType);
 
   return {
     schema: `${queryType}${mutationType}`,
