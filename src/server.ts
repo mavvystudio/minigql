@@ -5,6 +5,12 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 
 const PORT = Number(process.env.PORT);
 
+const defaultSchema = `
+input IdInput {
+  id: ID!
+}
+`;
+
 type ServeProps = {
   resolvers: {
     schema: string;
@@ -50,7 +56,7 @@ export const serve = async (
   }
 
   const server = new ApolloServer({
-    typeDefs: schema.concat(resolvers.schema),
+    typeDefs: defaultSchema.concat(schema).concat(resolvers.schema),
     resolvers: {
       Query: resolvers.query,
       Mutation: resolvers.mutation,

@@ -20,7 +20,7 @@ const init = async () => {
 
   const resolverFile = await service.utils.link(process.cwd(), '${buildDir}/resolvers');
   const plugins = await service.utils.importJs(path.join(process.cwd(), '${pluginsFile}'));
-  const resolvers = await service.resolverHelper.createResolverSchema(resolverFile, plugins);
+  const resolvers = await service.resolverHelper.createResolverSchema(resolverFile, schema, plugins);
 
   const options = {
     buildDir,
