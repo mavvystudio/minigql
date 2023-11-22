@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import * as fs from 'fs';
+import fse from 'fs-extra';
 import path from 'path';
 import { execSync, spawn } from 'child_process';
 
@@ -9,7 +10,8 @@ const pluginsFile = 'minigql.plugins.js';
 const argv = process.argv;
 
 if (argv[2] === 'start') {
-  execSync(`rm -rf ${buildDir} && tsc --outDir "${buildDir}"`);
+  fse.emptyDirSync(buildDir);
+  execSync(`tsc --outDir "${buildDir}"`);
 
   const fileContent = `import * as service from '@mavvy/minigql';
 import path from 'path';
