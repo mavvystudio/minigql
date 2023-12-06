@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs-extra';
+import type { Plugin } from './types';
 
 export const importJs = async (path: string) => {
   const exists = fs.existsSync(path);
@@ -39,4 +40,17 @@ export const link = async (cwd: string, target: string) => {
   }));
 
   return items;
+};
+
+export const createPluginConfigSchema = (plugins?: Plugin[]) => {
+  if (!plugins) {
+    return '';
+  }
+
+  const pluginSchema = plugins.reduce(
+    (prev, current) => prev.concat(current.schema || ''),
+    '',
+  );
+
+  return pluginSchema;
 };

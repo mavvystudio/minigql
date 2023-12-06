@@ -13,8 +13,11 @@ export type AppConfig = {
 };
 
 export type Plugin = {
+  name: string;
   resolverParam?: ResolverParam;
   context?: ({ req }: { req: any }) => Promise<any>;
+  schema?: string;
+  preStart?: () => Promise<any>;
 };
 
 export type ServeOptions = {

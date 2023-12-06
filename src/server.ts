@@ -6,6 +6,7 @@ import {
   startStandaloneServer,
 } from '@apollo/server/standalone';
 import { Plugin, ServeOptions, ServeProps } from './types';
+import { createPluginConfigSchema } from './utils.js';
 
 const PORT = Number(process.env.PORT);
 
@@ -42,6 +43,19 @@ const getContext = (plugins?: Plugin[]) => {
   }
   return target.context;
 };
+const pluginPrestart = (plugins?: Plugin[]) => {
+  if (!plugins) {
+    return undefined;
+  }
+  return Promise.all(
+    plugins.map((item) => {
+      if (item.preStart) {
+        return item.preStart;
+      }
+      return undefined;
+    }),
+  );
+};
 
 export const serve = async (
   { resolvers, schema }: ServeProps,
@@ -51,12 +65,18 @@ export const serve = async (
   const apolloConfig = serverFile?.apolloConfig || {};
   const serverConfig = serverFile?.serverConfig || {};
 
+  await pluginPrestart(options.config?.plugins);
+
   if (serverFile && serverFile.preStart) {
     await serverFile.preStart();
   }
+  const appConfigSchema = createPluginConfigSchema(options.config?.plugins);
 
   const server = new ApolloServer({
-    typeDefs: defaultSchema.concat(schema).concat(resolvers.schema),
+    typeDefs: defaultSchema
+      .concat(schema)
+      .concat(resolvers.schema)
+      .concat(appConfigSchema),
     resolvers: {
       Query: resolvers.query,
       Mutation: resolvers.mutation,
