@@ -100,13 +100,23 @@ const createSchema = (current: Resolver, schema: string) => {
   const returnType = createReturnType(current);
 
   if (!inputVariable) {
-    return `${current.name}:${returnType}`;
+    return {
+      schema: `${current.name}:${returnType}`,
+      returnType,
+    };
   }
 
-  return `${current.name}(input: ${inputVariable}):${returnType}`;
+  return {
+    schema: `${current.name}(input: ${inputVariable}):${returnType}`,
+    returnType,
+  };
 };
 
-const createResolverFunc = (current: Resolver, plugins: any) => {
+const createResolverFunc = (
+  current: Resolver,
+  plugins: any,
+  opt: { schema: string; returnType: string },
+) => {
   return {
     [current.name]: (
       parentContext: any,
@@ -121,11 +131,27 @@ const createResolverFunc = (current: Resolver, plugins: any) => {
         context,
         input: variables?.input,
         info,
+        ...opt,
       }),
   };
 };
 
-const createResolverPlugins = (plugins?: Plugin[]) => {
+const mergeResolversWithPlugin = (
+  resolvers: Resolver[],
+  plugins?: Plugin[],
+) => {
+  const pluginResolvers = plugins?.map((d) => d.resolvers).filter((d) => d);
+  if (!pluginResolvers || !pluginResolvers?.length) {
+    return resolvers;
+  }
+
+  return pluginResolvers.reduce(
+    (prev, current) => prev!.concat(current!),
+    resolvers,
+  );
+};
+
+const createResolverParamsPlugins = (plugins?: Plugin[]) => {
   if (!plugins) {
     return defaultPlugin;
   }
@@ -143,13 +169,18 @@ export const createResolverSchema = async (
   schema: string,
   config?: AppConfig,
 ) => {
-  const resolverPlugins = createResolverPlugins(config?.plugins);
+  const resolverParamsFromPlugin = createResolverParamsPlugins(config?.plugins);
+  const resolversWithPlugin = mergeResolversWithPlugin(items, config?.plugins);
 
-  const generatedData = items.reduce(
+  const generatedData = resolversWithPlugin!.reduce(
     (prev, current) => {
       const targetType = getResolverType(current);
       const generatedSchema = createSchema(current, schema);
-      const resolverFunc = createResolverFunc(current, resolverPlugins);
+      const resolverFunc = createResolverFunc(
+        current,
+        resolverParamsFromPlugin,
+        generatedSchema,
+      );
 
       const query = targetType === 'Query' ? resolverFunc : {};
       const mutation = targetType === 'Mutation' ? resolverFunc : {};
@@ -157,11 +188,11 @@ export const createResolverSchema = async (
       return {
         querySchema:
           targetType === 'Query'
-            ? prev.querySchema.concat(generatedSchema)
+            ? prev.querySchema.concat(generatedSchema.schema)
             : prev.querySchema,
         mutationSchema:
           targetType === 'Mutation'
-            ? prev.mutationSchema.concat(generatedSchema)
+            ? prev.mutationSchema.concat(generatedSchema.schema)
             : prev.mutationSchema,
         Query: {
           ...prev.Query,

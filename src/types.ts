@@ -18,6 +18,7 @@ export type Plugin = {
   context?: ({ req }: { req: any }) => Promise<any>;
   schema?: string;
   preStart?: () => Promise<any>;
+  resolvers?: Resolver[];
 };
 
 export type ServeOptions = {
