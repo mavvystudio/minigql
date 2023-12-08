@@ -123,16 +123,35 @@ const createResolverFunc = (
       variables: any,
       context: any,
       info: any,
-    ) =>
-      current.handler({
-        ...plugins,
+    ) => {
+      const handlerProps = {
         variables,
         parentContext,
         context,
         input: variables?.input,
         info,
         ...opt,
-      }),
+      };
+
+      const pluginParams = Object.entries(plugins).reduce((prev, current) => {
+        const [_k, v]: [string, any] = current;
+        if (typeof v === 'function') {
+          return {
+            ...prev,
+            ...v(handlerProps),
+          };
+        }
+        return {
+          ...prev,
+          ...v,
+        };
+      }, {});
+
+      return current.handler({
+        ...pluginParams,
+        ...handlerProps,
+      });
+    },
   };
 };
 
@@ -158,7 +177,7 @@ const createResolverParamsPlugins = (plugins?: Plugin[]) => {
   return plugins.reduce(
     (prev, current) => ({
       ...prev,
-      ...(current.resolverParam || {}),
+      [current.name]: current.resolverParam,
     }),
     defaultPlugin,
   );
