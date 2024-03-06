@@ -149,7 +149,7 @@ export const handler = async () => {
 |info|Contains information about the operation's execution state, including the field name, the path to the field from the root, and more.|
 
 ```javascript
-export const handler = asnc (handlerParams) => {
+export const handler = async (handlerParams) => {
   console.log(handlerParams.input);
 }
 ```
@@ -191,7 +191,7 @@ Good location for running a database connection. etc.
 // src/server.ts
 import mongoose from 'mongoose';
 
-export async function handler() {
+export async function preStart() {
   await mongoose.connect(process.env.MONGO_URI);
   console.log('connected to db');
 }
