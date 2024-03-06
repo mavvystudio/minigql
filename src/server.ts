@@ -20,7 +20,7 @@ const getServerApp = (
 ): Promise<{
   apolloConfig?: ApolloServerOptions<{}>;
   serverConfig?: StartStandaloneServerOptions<{}>;
-  preStart: () => Promise<void>;
+  preStart: (schema: any) => Promise<void>;
 } | null> =>
   new Promise((resolver) => {
     const filePath = path.join(process.cwd(), buildDir, 'server.js');
@@ -67,16 +67,15 @@ export const serve = async (
 
   await pluginPrestart(options.config?.plugins);
 
+  const typeDefSchema = defaultSchema.concat(schema).concat(resolvers.schema);
+
   if (serverFile && serverFile.preStart) {
-    await serverFile.preStart();
+    await serverFile.preStart(typeDefSchema);
   }
   const appConfigSchema = createPluginConfigSchema(options.config?.plugins);
 
   const server = new ApolloServer({
-    typeDefs: defaultSchema
-      .concat(schema)
-      .concat(resolvers.schema)
-      .concat(appConfigSchema),
+    typeDefs: typeDefSchema.concat(appConfigSchema),
     resolvers: {
       Query: resolvers.query,
       Mutation: resolvers.mutation,
