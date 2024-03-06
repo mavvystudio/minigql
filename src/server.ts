@@ -72,6 +72,7 @@ export const serve = async (
   if (serverFile && serverFile.preStart) {
     await serverFile.preStart(typeDefSchema);
   }
+
   const appConfigSchema = createPluginConfigSchema(options.config?.plugins);
 
   const server = new ApolloServer({
