@@ -9,7 +9,12 @@ export type Resolver = {
 type ResolverParam = { [k: string]: any };
 
 export type AppConfig = {
-  plugins?: Plugin[];
+  resolvers: any;
+  resolverParam: any;
+  name: any;
+  context: any;
+  preStart: any;
+  schema: any;
 };
 
 export type Plugin = {

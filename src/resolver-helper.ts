@@ -157,7 +157,7 @@ const createResolverFunc = (
 
 const mergeResolversWithPlugin = (
   resolvers: Resolver[],
-  plugins?: Plugin[],
+  plugins?: AppConfig[],
 ) => {
   const pluginResolvers = plugins?.map((d) => d.resolvers).filter((d) => d);
   if (!pluginResolvers || !pluginResolvers?.length) {
@@ -186,13 +186,13 @@ const createResolverParamsPlugins = (plugins?: Plugin[]) => {
 export const createResolverSchema = async (
   items: Resolver[],
   schema: string,
-  config?: AppConfig,
+  config?: AppConfig[],
 ) => {
-  const resolverParamsFromPlugin = createResolverParamsPlugins(config?.plugins);
-  const resolversWithPlugin = mergeResolversWithPlugin(items, config?.plugins);
+  const resolverParamsFromPlugin = createResolverParamsPlugins(config);
+  const resolversWithPlugin = mergeResolversWithPlugin(items, config);
 
   const generatedData = resolversWithPlugin!.reduce(
-    (prev, current) => {
+    (prev: any, current: any) => {
       const targetType = getResolverType(current);
       const generatedSchema = createSchema(current, schema);
       const resolverFunc = createResolverFunc(
