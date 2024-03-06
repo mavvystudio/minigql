@@ -5,7 +5,7 @@ import {
   StartStandaloneServerOptions,
   startStandaloneServer,
 } from '@apollo/server/standalone';
-import { Plugin, ServeOptions, ServeProps } from './types';
+import { AppConfig, Plugin, ServeOptions, ServeProps } from './types';
 import { createPluginConfigSchema } from './utils.js';
 
 const PORT = Number(process.env.PORT);
@@ -43,7 +43,7 @@ const getContext = (plugins?: Plugin[]) => {
   }
   return target.context;
 };
-const pluginPrestart = (plugins?: Plugin[]) => {
+const pluginPrestart = (plugins?: AppConfig[]) => {
   if (!plugins) {
     return undefined;
   }
@@ -65,7 +65,7 @@ export const serve = async (
   const apolloConfig = serverFile?.apolloConfig || {};
   const serverConfig = serverFile?.serverConfig || {};
 
-  await pluginPrestart(options.config?.plugins);
+  await pluginPrestart(options.config);
 
   const typeDefSchema = defaultSchema.concat(schema).concat(resolvers.schema);
 
@@ -73,7 +73,7 @@ export const serve = async (
     await serverFile.preStart(typeDefSchema);
   }
 
-  const appConfigSchema = createPluginConfigSchema(options.config?.plugins);
+  const appConfigSchema = createPluginConfigSchema(options.config);
 
   const server = new ApolloServer({
     typeDefs: typeDefSchema.concat(appConfigSchema),
@@ -84,7 +84,7 @@ export const serve = async (
     ...apolloConfig,
   });
 
-  const c = getContext(options.config?.plugins);
+  const c = getContext(options.config);
   const { url } = await startStandaloneServer(server, {
     listen: { port: PORT },
     context: c,

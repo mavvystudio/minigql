@@ -28,7 +28,7 @@ export type Plugin = {
 
 export type ServeOptions = {
   buildDir: string;
-  config?: AppConfig;
+  config?: AppConfig[];
 };
 
 export type ServeProps = {
