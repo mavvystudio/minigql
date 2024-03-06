@@ -4,6 +4,9 @@ Setting up a nodejs graphql server should be simple, right?
 
 ## Setup
 
+***IMPORTANT***
+Before you get started, just remember that this framework requires at least 1 Query and 1 Mutation to get it running.
+
 ### Install
 
 ```bash
